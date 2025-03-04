@@ -1,0 +1,72 @@
+<div class="container mt-4">
+  <h2 class="mb-4">我的订单</h2>
+
+  <% if (orders.length > 0) { %>
+    <div class="order-list">
+      <% orders.forEach(order => { %>
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-meta">
+              <span class="order-number">订单号：<%= order.orderNumber %></span>
+              <span class="order-date">下单时间：<%= new Date(order.createdAt).toLocaleString() %></span>
+            </div>
+            <div class="order-status">
+              <span class="badge badge-<%= order.status === 'pending' ? 'warning' : 
+                                       order.status === 'paid' ? 'success' : 
+                                       order.status === 'shipped' ? 'info' : 
+                                       order.status === 'completed' ? 'primary' : 'secondary' %>">
+                <%= order.status === 'pending' ? '待付款' :
+                   order.status === 'paid' ? '已付款' :
+                   order.status === 'shipped' ? '已发货' :
+                   order.status === 'completed' ? '已完成' : '已取消' %>
+              </span>
+            </div>
+          </div>
+
+          <div class="order-items">
+            <% order.OrderItems.forEach(item => { %>
+              <div class="order-item">
+                <div class="item-image">
+                  <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>">
+                </div>
+                <div class="item-info">
+                  <h5 class="item-name"><%= item.Product.name %></h5>
+                  <p class="item-price">￥<%= item.price %> × <%= item.quantity %></p>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+
+          <div class="order-footer">
+            <div class="order-total">
+              总计：<span class="price">￥<%= order.totalAmount %></span>
+            </div>
+            <div class="order-actions">
+              <% if (order.status === 'pending') { %>
+                <button class="btn btn-primary btn-sm pay-order" data-id="<%= order.id %>">
+                  立即付款
+                </button>
+                <button class="btn btn-outline-danger btn-sm cancel-order" data-id="<%= order.id %>">
+                  取消订单
+                </button>
+              <% } else if (order.status === 'shipped') { %>
+                <button class="btn btn-success btn-sm confirm-receipt" data-id="<%= order.id %>">
+                  确认收货
+                </button>
+              <% } %>
+              <a href="/orders/<%= order.id %>" class="btn btn-outline-primary btn-sm">
+                订单详情
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <i class="fas fa-box-open"></i>
+      <p>暂无订单</p>
+      <a href="/products" class="btn btn-primary">去购物</a>
+    </div>
+  <% } %>
+</div>

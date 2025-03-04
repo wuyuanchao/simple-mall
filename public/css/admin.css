@@ -1,0 +1,179 @@
+/* 管理后台全局样式 */
+body {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* 导航栏样式优化 */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  z-index: 1030;
+  padding: 0.75rem 1rem;
+  background: #2c3e50 !important;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 1.25rem;
+  color: #fff !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255,255,255,.8);
+  padding: 0.5rem 1rem;
+  transition: all 0.3s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #fff;
+}
+
+.navbar .dropdown-menu {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.navbar .dropdown-item {
+  padding: 0.6rem 1.5rem;
+  color: #495057;
+  transition: all 0.2s;
+}
+
+.navbar .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+}
+
+.navbar .dropdown-item i {
+  width: 20px;
+  margin-right: 0.5rem;
+  color: #6c757d;
+}
+
+.navbar .dropdown-divider {
+  margin: 0.5rem 0;
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* 侧边栏样式 */
+.admin-sidebar {
+  background: #fff;
+  min-height: calc(100vh - 56px);
+  box-shadow: 1px 0 5px rgba(0,0,0,.05);
+  padding-top: 1rem;
+}
+
+.admin-sidebar .nav-link {
+  color: #495057;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.admin-sidebar .nav-link i {
+  width: 20px;
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.admin-sidebar .nav-link:hover {
+  color: #2c3e50;
+  background: #f8f9fa;
+}
+
+.admin-sidebar .nav-link.active {
+  color: #3498db;
+  background: #e3f2fd;
+  border-right: 3px solid #3498db;
+}
+
+/* 内容区域样式 */
+.card {
+  border: none;
+  box-shadow: 0 0 10px rgba(0,0,0,.05);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 1.5rem;
+}
+
+/* 表格样式优化 */
+.table th {
+  border-top: none;
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* 订单状态标签样式 */
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 500;
+}
+
+/* 操作按钮样式 */
+.btn-sm {
+  padding: 0.25rem 0.8rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1.5rem;
+}
+
+.dropdown-item i {
+  width: 20px;
+  margin-right: 0.5rem;
+}
+
+/* 商品图片缩略图 */
+.order-product-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* 页脚样式 */
+.footer {
+  background: #fff;
+  border-top: 1px solid #eee;
+  padding: 1rem 0;
+  position: sticky;
+  bottom: 0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    min-height: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  
+  .card-header .btn-group {
+    margin-top: 1rem;
+  }
+}
