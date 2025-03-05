@@ -65,6 +65,21 @@ app.use('/orders', orderRoutes);
 app.use('/profile', profileRoutes);
 app.use('/admin', adminRoutes);
 
+// 添加缓存控制中间件
+app.use((req, res, next) => {
+  // 针对静态资源和 CDN 资源设置缓存
+  if (req.url.match(/\.(css|js|jpg|jpeg|png|gif|ico|woff|woff2|ttf|eot)$/)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 缓存一年
+  }
+  next();
+});
+
+// 设置静态文件中间件
+app.use(express.static('public', {
+  maxAge: '1y',
+  etag: true
+}));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`服务器运行在端口 ${PORT}`);

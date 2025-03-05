@@ -7,10 +7,16 @@
 - Node.js >= 16.0.0
 - MySQL >= 5.7
 - npm >= 8.0.0
+- PM2 (用于生产环境)
 
 ## 快速开始
 
-1. 克隆项目
+1. 安装全局依赖
+```bash
+# 安装 PM2
+npm install -g pm2
+```
+克隆项目
 ```bash
 git clone <repository-url>
 cd mall
