@@ -1,0 +1,205 @@
+<div class="container mt-4">
+  <h2>我的购物车</h2>
+  
+  <% if (cartItems.length > 0) { %>
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>商品</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>小计</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cartItems.forEach(item => { %>
+                <tr data-id="<%= item.id %>">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>" class="cart-item-image">
+                      <div class="ml-3">
+                        <h6 class="mb-0"><%= item.Product.name %></h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>￥<%= item.Product.price %></td>
+                  <td>
+                    <!-- 修改按钮部分 -->
+                    <div class="quantity-selector">
+                      <div class="input-group">
+                        <button class="btn btn-outline-secondary h-180 px-3 decrease-qty" type="button">-</button>
+                        <input type="number" class="form-control form-control-lg text-center item-quantity" 
+                               value="<%= item.quantity %>" min="1" max="<%= item.Product.stock %>">
+                        <button class="btn btn-outline-secondary h-180 px-3 increase-qty" type="button">+</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="subtotal">￥<%= (item.Product.price * item.quantity).toFixed(2) %></td>
+                  <td>
+                    <button class="btn btn-sm btn-danger remove-item">删除</button>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="total">
+            总计: <span class="h4 mb-0 text-danger">￥<%= cartItems.reduce((sum, item) => sum + item.Product.price * item.quantity, 0).toFixed(2) %></span>
+          </div>
+          <a href="/checkout" class="btn btn-primary btn-lg">去结算</a>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="text-center py-5">
+      <h4 class="text-muted">购物车是空的</h4>
+      <a href="/products" class="btn btn-primary mt-3">去购物</a>
+    </div>
+  <% } %>
+</div>
+
+<style>
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.quantity-selector .input-group .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding: 0;
+}
+
+.quantity-selector .form-control {
+  border-radius: 0;
+}
+
+.quantity-selector .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.quantity-selector .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 更新数量
+  function updateQuantity(input, change) {
+    const newValue = parseInt(input.value) + change;
+    const max = parseInt(input.max);
+    if (newValue >= 1 && newValue <= max) {
+      input.value = newValue;
+      updateCartItem(input);
+    }
+  }
+
+  // 更新购物车项
+  async function updateCartItem(input) {
+    const tr = input.closest('tr');
+    const itemId = tr.dataset.id;
+    const quantity = input.value;
+    
+    try {
+      const response = await fetch(`/cart/update/${itemId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quantity })
+      });
+      
+      if (response.ok) {
+        updateSubtotal(tr);
+        updateTotal();
+      }
+    } catch (error) {
+      console.error('更新失败:', error);
+    }
+  }
+
+  // 更新小计
+  function updateSubtotal(tr) {
+    const price = parseFloat(tr.querySelector('td:nth-child(2)').textContent.replace('￥', ''));
+    const quantity = parseInt(tr.querySelector('.item-quantity').value);
+    tr.querySelector('.subtotal').textContent = `￥${(price * quantity).toFixed(2)}`;
+  }
+
+  // 更新总计
+  function updateTotal() {
+    const subtotals = Array.from(document.querySelectorAll('.subtotal'))
+      .map(el => parseFloat(el.textContent.replace('￥', '')));
+    const total = subtotals.reduce((sum, subtotal) => sum + subtotal, 0);
+    document.querySelector('.total span').textContent = `￥${total.toFixed(2)}`;
+  }
+
+  // 绑定减少按钮事件
+  document.querySelectorAll('.decrease-qty').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const input = this.parentElement.querySelector('.item-quantity');
+      updateQuantity(input, -1);
+    });
+  });
+
+  // 绑定增加按钮事件
+  document.querySelectorAll('.increase-qty').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const input = this.parentElement.querySelector('.item-quantity');
+      updateQuantity(input, 1);
+    });
+  });
+
+  // 绑定输入框变化事件
+  document.querySelectorAll('.item-quantity').forEach(input => {
+    input.addEventListener('change', function() {
+      const value = parseInt(this.value);
+      const max = parseInt(this.max);
+      if (value < 1) {
+        this.value = 1;
+      } else if (value > max) {
+        this.value = max;
+      }
+      updateCartItem(this);
+    });
+  });
+
+  document.querySelectorAll('.remove-item').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      if (confirm('确定要删除这个商品吗？')) {
+        const tr = this.closest('tr');
+        const itemId = tr.dataset.id;
+        
+        try {
+          const response = await fetch(`/cart/remove/${itemId}`, {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            tr.remove();
+            updateTotal();
+            
+            if (document.querySelectorAll('tbody tr').length === 0) {
+              location.reload();
+            }
+          }
+        } catch (error) {
+          console.error('删除失败:', error);
+        }
+      }
+    });
+  });
+});
+</script>

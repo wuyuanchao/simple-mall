@@ -39,9 +39,9 @@
             <div class="quantity-selector">
               <label>数量：</label>
               <div class="input-group">
-                <button class="btn btn-outline-secondary" type="button" id="decrease">-</button>
-                <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="<%= product.stock %>">
-                <button class="btn btn-outline-secondary" type="button" id="increase">+</button>
+                <button class="btn btn-outline-secondary h-180 px-3" type="button" id="decrease">-</button>
+                <input type="number" class="form-control form-control-lg text-center" id="quantity" value="1" min="1" max="<%= product.stock %>">
+                <button class="btn btn-outline-secondary h-180 px-3" type="button" id="increase">+</button>
               </div>
             </div>
             
@@ -93,3 +93,88 @@
     商品已成功加入购物车
   </div>
 </div>
+
+<style>
+.quantity-selector .input-group {
+  width: 150px;
+}
+
+.quantity-selector .input-group .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding: 0;
+}
+
+.quantity-selector .form-control {
+  border-radius: 0;
+}
+
+.quantity-selector .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.quantity-selector .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+</style>
+
+<!-- 在页面底部添加以下脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const quantityInput = document.getElementById('quantity');
+  const decreaseBtn = document.getElementById('decrease');
+  const increaseBtn = document.getElementById('increase');
+  const maxStock = <%= product.stock %>;
+
+  // 更新数量
+  function updateQuantity(value) {
+    const newValue = parseInt(value);
+    if (newValue >= 1 && newValue <= maxStock) {
+      quantityInput.value = newValue;
+    }
+  }
+
+  // 减少数量
+  decreaseBtn.addEventListener('click', function() {
+    updateQuantity(parseInt(quantityInput.value) - 1);
+  });
+
+  // 增加数量
+  increaseBtn.addEventListener('click', function() {
+    updateQuantity(parseInt(quantityInput.value) + 1);
+  });
+
+  // 手动输入验证
+  quantityInput.addEventListener('change', function() {
+    updateQuantity(this.value);
+  });
+});
+// 在现有脚本中添加
+document.querySelector('.add-to-cart').addEventListener('click', async function() {
+  const productId = this.dataset.id;
+  const quantity = document.getElementById('quantity').value;
+
+  try {
+    const response = await fetch('/cart/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId, quantity })
+    });
+
+    if (response.ok) {
+      $('.toast').toast('show');
+    } else {
+      alert('添加到购物车失败');
+    }
+  } catch (error) {
+    console.error('添加到购物车失败:', error);
+    alert('添加到购物车失败');
+  }
+});
+</script>

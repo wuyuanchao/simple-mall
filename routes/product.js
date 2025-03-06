@@ -8,7 +8,7 @@ const sequelize = require('../config/database');
 router.get('/', async (req, res) => {
   try {
     const { category, search, sort } = req.query;
-    let where = {};
+    let where = { status: 'active' };
     let order = [['createdAt', 'DESC']];
 
     if (category) {

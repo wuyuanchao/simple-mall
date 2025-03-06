@@ -3,6 +3,7 @@ const { Product } = require('../models');
 const getHomePage = async (req, res) => {
   try {
     const products = await Product.findAll({
+      where: { status: 'active' },
       limit: 8,
       order: [['createdAt', 'DESC']]
     });

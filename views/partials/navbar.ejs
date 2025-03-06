@@ -16,8 +16,16 @@
             <ul class="navbar-nav">
                 <% if (user) { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">
-                            <i class="fas fa-shopping-cart"></i> 购物车
+                        <a class="nav-link position-relative" href="/cart">
+                            <span class="position-relative">
+                                <i class="fas fa-shopping-cart"></i>
+                                <% if (locals.cartItemCount && cartItemCount > 0) { %>
+                                    <span class="badge rounded-pill bg-danger">
+                                        <%= cartItemCount %>
+                                    </span>
+                                <% } %>
+                            </span>
+                            购物车
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -33,7 +41,7 @@
                             </a>
                             <% if (user.role === 'admin') { %>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/admin/orders">
+                                <a class="dropdown-item" href="/admin">
                                     <i class="fas fa-cog"></i> 管理后台
                                 </a>
                             <% } %>
@@ -55,3 +63,19 @@
         </div>
     </div>
 </nav>
+<style>
+.nav-link .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.6em;
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    transform: none !important;
+    opacity: 0.9;  /* 添加透明度 */
+}
+
+.nav-link .position-relative {
+    display: inline-block;
+    margin-right: 4px;
+}
+</style>

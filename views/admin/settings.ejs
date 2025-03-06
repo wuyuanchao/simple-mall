@@ -1,0 +1,83 @@
+<%- include('./header') %>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-2">
+      <%- include('./sidebar') %>
+    </div>
+    
+    <main class="col-md-10">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">系统设置</h1>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">基本设置</h5>
+            </div>
+            <div class="card-body">
+              <form action="/admin/settings" method="POST">
+                <div class="form-group mb-3">
+                  <label>商城名称</label>
+                  <input type="text" class="form-control" name="siteName" value="<%= settings.siteName %>" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label>商城描述</label>
+                  <textarea class="form-control" name="siteDescription" rows="3"><%= settings.siteDescription %></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label>联系电话</label>
+                  <input type="tel" class="form-control" name="contactPhone" value="<%= settings.contactPhone %>">
+                </div>
+                <div class="form-group mb-3">
+                  <label>联系邮箱</label>
+                  <input type="email" class="form-control" name="contactEmail" value="<%= settings.contactEmail %>">
+                </div>
+                <button type="submit" class="btn btn-primary">保存设置</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">图片设置</h5>
+            </div>
+            <div class="card-body">
+              <form action="/admin/settings/logo" method="POST" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                  <label>商城 Logo</label>
+                  <div class="mb-2">
+                    <% if (settings.logo) { %>
+                      <img src="<%= settings.logo %>" alt="商城 Logo" class="img-thumbnail" style="max-height: 100px;">
+                    <% } %>
+                  </div>
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="logo" accept="image/*">
+                    <label class="custom-file-label">选择图片</label>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">上传 Logo</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// 文件选择监听
+document.querySelectorAll('.custom-file-input').forEach(input => {
+  input.addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || '选择文件';
+    e.target.nextElementSibling.textContent = fileName;
+  });
+});
+</script>
+
+<%- include('./footer') %>

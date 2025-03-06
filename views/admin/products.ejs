@@ -1,0 +1,265 @@
+<%- include('./header') %>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+      <!-- 侧边栏 -->
+      <div class="col-md-2">
+        <%- include('./sidebar') %>
+      </div>
+    
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">商品管理</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
+            <i class="fas fa-plus"></i> 添加商品
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">商品列表</h5>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-success btn-sm mr-2" data-toggle="modal" data-target="#importModal">
+                <i class="fas fa-file-import"></i> 批量导入
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th>ID</th>
+                  <th>图片</th>
+                  <th>名称</th>
+                  <th>分类</th>
+                  <th>价格</th>
+                  <th>库存</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.forEach(product => { %>
+                  <tr>
+                    <td><%= product.id %></td>
+                    <td>
+                      <img src="<%= product.image %>" alt="<%= product.name %>" class="product-thumbnail">
+                    </td>
+                    <td><%= product.name %></td>
+                    <td><%= product.category %></td>
+                    <td>¥<%= product.price %></td>
+                    <td><%= product.stock %></td>
+                    <td>
+                      <span class="badge badge-<%= product.status === 'active' ? 'success' : 'secondary' %>">
+                        <%= product.status === 'active' ? '上架' : '下架' %>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+                          操作
+                        </button>
+                        <div class="dropdown-menu">
+                          <form action="/admin/products/<%= product.id %>/toggle" method="POST">
+                            <button type="submit" class="dropdown-item">
+                              <%= product.status === 'active' ? '下架' : '上架' %>
+                            </button>
+                          </form>
+                          <form action="/admin/products/<%= product.id %>/delete" method="POST" 
+                                onsubmit="return confirm('确定要删除此商品吗？');">
+                            <button type="submit" class="dropdown-item text-danger">删除</button>
+                          </form>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- 添加商品模态框 -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">添加商品</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <form action="/admin/products" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>商品名称</label>
+            <input type="text" class="form-control" name="name" required>
+          </div>
+          <div class="form-group">
+            <label>商品价格</label>
+            <input type="number" class="form-control" name="price" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>库存数量</label>
+            <input type="number" class="form-control" name="stock" required>
+          </div>
+          <div class="form-group">
+            <label>商品图片</label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" name="image" accept="image/*" required>
+              <label class="custom-file-label">选择图片</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>商品描述</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑商品模态框 -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">编辑商品</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <form id="editProductForm" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <!-- 与添加商品表单相同的字段 -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-primary">保存更改</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 导入商品模态框 -->
+<div class="modal fade" id="importModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">导入商品</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>选择Excel文件</label>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="excelFile" accept=".xlsx,.xls">
+            <label class="custom-file-label">选择文件</label>
+          </div>
+          <small class="form-text text-muted">支持.xlsx或.xls格式的Excel文件</small>
+        </div>
+        <div id="importResult" class="alert mt-3" style="display: none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="importButton">导入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.product-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+</style>
+
+<script>
+// 文件选择监听
+document.querySelectorAll('.custom-file-input').forEach(input => {
+  input.addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || '选择文件';
+    e.target.nextElementSibling.textContent = fileName;
+  });
+});
+
+// 编辑商品
+function editProduct(product) {
+  const form = document.getElementById('editProductForm');
+  form.action = `/admin/products/${product.id}`;
+  
+  // 填充表单
+  form.querySelector('[name="name"]').value = product.name;
+  form.querySelector('[name="categoryId"]').value = product.categoryId;
+  form.querySelector('[name="price"]').value = product.price;
+  form.querySelector('[name="stock"]').value = product.stock;
+  form.querySelector('[name="description"]').value = product.description;
+  
+  // 显示模态框
+  $('#editProductModal').modal('show');
+}
+
+// 导入商品
+document.getElementById('importButton').addEventListener('click', async function() {
+  const fileInput = document.getElementById('excelFile');
+  const resultDiv = document.getElementById('importResult');
+  
+  if (!fileInput.files[0]) {
+    showImportResult('请选择文件', 'danger');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+
+  try {
+    const response = await fetch('/admin/products/import', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    
+    if (response.ok) {
+      showImportResult(`导入成功！共导入 ${result.count} 个商品`, 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      showImportResult(result.error || '导入失败', 'danger');
+    }
+  } catch (error) {
+    showImportResult('导入过程发生错误', 'danger');
+  }
+});
+
+function showImportResult(message, type) {
+  const resultDiv = document.getElementById('importResult');
+  resultDiv.className = `alert alert-${type}`;
+  resultDiv.textContent = message;
+  resultDiv.style.display = 'block';
+}
+</script>
+
+<%- include('./footer') %>

@@ -3,6 +3,9 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
 const sequelize = require('./config/database');
+const { CartItem } = require('./models');
+// 导入模型
+require('./models');
 require('dotenv').config();
 
 const app = express();
@@ -33,8 +36,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// 导入模型
-require('./models');
+// 在全局中间件部分添加
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      const cartItemCount = await CartItem.count({
+        where: { UserId: req.session.user.id }
+      });
+      res.locals.cartItemCount = cartItemCount;
+    } else {
+      res.locals.cartItemCount = 0;
+    }
+  } catch (error) {
+    console.error('获取购物车数量失败:', error);
+    res.locals.cartItemCount = 0;
+  }
+  next();
+});
 
 // 数据库连接
 sequelize.authenticate()
@@ -56,7 +74,8 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/orders');
 const profileRoutes = require('./routes/profile');
-const adminRoutes = require('./routes/admin');
+const cartRoutes = require('./routes/cart');
+const adminRoutes = require('./routes/admin/index');
 
 // 路由
 app.use('/auth', authRoutes);
@@ -64,6 +83,7 @@ app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/profile', profileRoutes);
 app.use('/admin', adminRoutes);
+app.use('/cart', cartRoutes);
 
 // 添加缓存控制中间件
 app.use((req, res, next) => {

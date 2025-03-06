@@ -41,12 +41,35 @@
       <!-- 搜索框 -->
       <form class="mb-4" action="/products" method="GET">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="搜索商品..." name="search" value="<%= search %>">
+          <input type="text" 
+                 class="form-control form-control-lg" 
+                 placeholder="搜索商品..." 
+                 name="search" 
+                 value="<%= search %>">
           <div class="input-group-append">
-            <button class="btn btn-primary" type="submit">搜索</button>
+            <button class="btn btn-primary h-100" type="submit">
+              <i class="fas fa-search"></i> 搜索
+            </button>
           </div>
         </div>
       </form>
+
+      <style>
+      .input-group .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        padding: 0.5rem 1.5rem;
+      }
+
+      .input-group .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .input-group-append {
+        display: flex;
+      }
+      </style>
 
       <!-- 商品网格 -->
       <div class="row">

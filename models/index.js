@@ -3,6 +3,7 @@ const Product = require('./Product');
 const Order = require('./Order');
 const OrderItem = require('./OrderItem');
 const CartItem = require('./CartItem');
+const Setting = require('./Setting');
 
 // 用户-订单关联
 User.hasMany(Order);
@@ -29,5 +30,6 @@ module.exports = {
   Product,
   Order,
   OrderItem,
-  CartItem
+  CartItem,
+  Setting
 };
