@@ -155,10 +155,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // 在现有脚本中添加
 document.querySelector('.add-to-cart').addEventListener('click', async function() {
-  const productId = this.dataset.id;
-  const quantity = document.getElementById('quantity').value;
-
   try {
+    // 检查用户是否登录，从 EJS 模板变量中获取用户信息
+    <% if (!locals.user) { %>
+      // 保存当前商品页面URL到会话，以便登录后返回
+      sessionStorage.setItem('redirectUrl', window.location.href);
+      window.location.href = '/auth/login';
+      return;
+    <% } %>
+
+    const productId = this.dataset.id;
+    const quantity = document.getElementById('quantity').value;
+
     const response = await fetch('/cart/add', {
       method: 'POST',
       headers: {
@@ -167,10 +175,12 @@ document.querySelector('.add-to-cart').addEventListener('click', async function(
       body: JSON.stringify({ productId, quantity })
     });
 
+    const result = await response.json();
+    
     if (response.ok) {
       $('.toast').toast('show');
     } else {
-      alert('添加到购物车失败');
+      alert(result.message || '添加到购物车失败');
     }
   } catch (error) {
     console.error('添加到购物车失败:', error);

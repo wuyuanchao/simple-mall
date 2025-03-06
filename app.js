@@ -37,12 +37,15 @@ app.use((req, res, next) => {
 });
 
 // 在全局中间件部分添加
+// 购物车数量中间件
 app.use(async (req, res, next) => {
   try {
     if (req.session.user) {
-      const cartItemCount = await CartItem.count({
+      const cartItems = await CartItem.findAll({
         where: { UserId: req.session.user.id }
       });
+      // 计算所有商品数量的总和
+      const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
       res.locals.cartItemCount = cartItemCount;
     } else {
       res.locals.cartItemCount = 0;
@@ -99,6 +102,12 @@ app.use(express.static('public', {
   maxAge: '1y',
   etag: true
 }));
+
+// 导入路由
+const checkoutRoutes = require('./routes/checkout');
+
+// 添加路由
+app.use('/checkout', checkoutRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <h2>订单结算</h2>
+  
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header">
+          确认商品信息
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>商品</th>
+                  <th>单价</th>
+                  <th>数量</th>
+                  <th>小计</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cartItems.forEach(item => { %>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>" class="checkout-item-image">
+                        <div class="ml-3">
+                          <h6 class="mb-0"><%= item.Product.name %></h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>￥<%= item.Product.price %></td>
+                    <td><%= item.quantity %></td>
+                    <td>￥<%= (item.Product.price * item.quantity).toFixed(2) %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          收货信息
+        </div>
+        <div class="card-body">
+          <form id="checkoutForm" method="POST" action="/checkout">
+            <div class="form-group">
+              <label for="name">收货人</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">联系电话</label>
+              <input type="tel" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+              <label for="address">收货地址</label>
+              <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          订单总计
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-3">
+            <span>商品总计：</span>
+            <span>￥<%= total.toFixed(2) %></span>
+          </div>
+          <div class="d-flex justify-content-between mb-3">
+            <span>运费：</span>
+            <span>￥0.00</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between mb-3">
+            <strong>应付总额：</strong>
+            <strong class="text-danger">￥<%= total.toFixed(2) %></strong>
+          </div>
+          <button type="submit" form="checkoutForm" class="btn btn-primary btn-lg btn-block">
+            提交订单
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.checkout-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+</style>

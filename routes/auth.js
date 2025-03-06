@@ -40,7 +40,10 @@ router.post('/login', async (req, res) => {
     };
     console.log("登录成功");
     req.flash('success_msg', '登录成功');
-    res.redirect('/');
+    // 检查是否有保存的重定向URL
+    const redirectUrl = req.session.redirectUrl || '/';
+    delete req.session.redirectUrl;
+    res.redirect(redirectUrl);
   } catch (error) {
     console.error('登录失败:', error);
     req.flash('error_msg', '登录失败');
