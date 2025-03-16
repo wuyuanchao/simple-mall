@@ -118,4 +118,26 @@ router.post('/:id/confirm', ensureAuthenticated, async (req, res) => {
     res.status(400).json({ message: error.message || '确认收货失败' });
   }
 });
+// 支付订单
+router.post('/:id/pay', ensureAuthenticated, async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.session.user.id,
+        status: 'pending'
+      }
+    });
+
+    if (!order) {
+      throw new Error('订单不存在或无法支付');
+    }
+
+    await order.update({ status: 'paid' });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('支付订单失败:', error);
+    res.status(400).json({ message: error.message || '支付订单失败' });
+  }
+});
 module.exports = router;

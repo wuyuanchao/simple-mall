@@ -43,16 +43,16 @@
             </div>
             <div class="order-actions">
               <% if (order.status === 'pending') { %>
-                <button class="btn btn-primary btn-sm pay-order" data-id="<%= order.id %>">
+                <a href="/orders/<%= order.id %>" class="btn btn-primary btn-sm pay-order">
                   立即付款
-                </button>
-                <button class="btn btn-outline-danger btn-sm cancel-order" data-id="<%= order.id %>">
+                </a>
+                <a href="/orders/<%= order.id %>" class="btn btn-outline-danger btn-sm cancel-order">
                   取消订单
-                </button>
+                </a>
               <% } else if (order.status === 'shipped') { %>
-                <button class="btn btn-success btn-sm confirm-receipt" data-id="<%= order.id %>">
+                <a href="/orders/<%= order.id %>" class="btn btn-success btn-sm confirm-receipt">
                   确认收货
-                </button>
+                </a>
               <% } %>
               <a href="/orders/<%= order.id %>" class="btn btn-outline-primary btn-sm">
                 订单详情

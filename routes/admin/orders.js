@@ -150,7 +150,7 @@ router.get('/', ensureAdmin, async (req, res) => {
               recipientPhone: orderData.recipientPhone,
               totalAmount: totalAmount,
               OrderItems: orderItemsData.map(item => ({
-                productId: item.productId,  // 使用大写的 ProductId
+                ProductId: item.productId,  // 使用大写的 ProductId
                 quantity: item.quantity,
                 price: item.price,
                 Product: {  // 添加 Product 关联

@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-6">
           <h5>订单信息</h5>
-          <p class="mb-1">下单时间：<%= new Date(order.orderDate).toLocaleString() %></p>
+          <p class="mb-1">下单时间：<%= order.orderDate ? new Date(order.orderDate).toLocaleString() : new Date(order.createdAt).toLocaleString() %></p>
           <p>订单状态：<%= 
             order.status === 'pending' ? '待付款' : 
             order.status === 'paid' ? '已付款' : 
@@ -142,6 +142,14 @@ document.addEventListener('DOMContentLoaded', function() {
     orderId = $(this).data('id');
     currentAction = 'confirm';
     $('#confirmMessage').text('确定已收到商品吗？');
+    modal.modal('show');
+  });
+
+  // 添加支付按钮处理
+  $('.pay-order').click(function() {
+    orderId = $(this).data('id');
+    currentAction = 'pay';
+    $('#confirmMessage').text('我们会尽快联系您完成线下支付，确认继续吗？');
     modal.modal('show');
   });
 
